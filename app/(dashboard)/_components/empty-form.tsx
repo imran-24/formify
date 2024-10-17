@@ -12,8 +12,8 @@ const EmptyForm = () => {
     mutate({
         title: "Untitled"
     })
-    .then((id) => toast.success("Form created"))
-    .catch(error => toast.error("Failed to create form"));
+    .then((_id) => toast.success("Form created"))
+    .catch(_error => toast.error("Failed to create form"));
   }
   return (
     <div className='flex flex-col items-center justify-center h-full'>
