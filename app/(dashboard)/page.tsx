@@ -15,7 +15,7 @@ export default function DashboardPage({ searchParams }: DashboardPageProps) {
   const { userId } = useAuth();
 
   return (
-    <div className='flex flex-col bg-neutral-100 p-6 flex-1 min-h-full'>
+    <div className='flex flex-col p-6 flex-1 h-full'>
       <Navbar />
       <FormList query={searchParams} authId={userId!} />
     </div>

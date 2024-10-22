@@ -3,7 +3,7 @@ import { query } from "./_generated/server";
 
 export const get = query({
   args: {
-    formId: v.string(),
+    formId: v.id("forms"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -12,7 +12,7 @@ export const get = query({
     const formFields = await ctx.db
       .query("formFields")
       .withIndex("by_formId", (q) => q.eq("formId", args.formId))
-      .order("desc")
+      .order("asc")
       .collect();
     return formFields;
   },

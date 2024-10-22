@@ -27,7 +27,7 @@ export const create = mutation({
       title: args.title,
       authorId: identity.subject,
       authorName: identity.name!,
-      isPublic: false,
+      isPublished: false,
       imageUrl: randomImage,
     });
     return form;
@@ -44,8 +44,13 @@ export const getById = query({
     const form = await ctx.db.get(args.formId);
 
     if (!form) {
-      throw new Error("Not found");
+      return null;
     }
+
+    if (form.isPublished) {
+      return form;
+    }
+
     if (!identity) throw new Error("Not authenticated");
 
     const userId = identity.subject;
@@ -70,28 +75,37 @@ export const remove = mutation({
 });
 
 export const update = mutation({
-  args: { id: v.id("forms"), title: v.string(), descrition: v.optional(v.string()) },
+  args: {
+    id: v.id("forms"),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    isPublished: v.optional(v.boolean()),
+  },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    const title = args.title;
-    const description = args.descrition;
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) {
+      throw new Error("Unauthenticated");
+    }
 
-    if (!args.title) throw new Error("Title is required");
+    const userId = identity.subject;
 
-    if (title.length > 60)
-      throw new Error("Title cannot be longer than 60 characters");
+    const { id, ...rest } = args;
 
-    const existingForm = await ctx.db.get(args.id);
+    const existingDocument = await ctx.db.get(args.id);
 
-    if (!existingForm) throw new Error("Form doesn't exist");
+    if (!existingDocument) {
+      throw new Error("Not found");
+    }
 
-    const form = await ctx.db.patch(args.id, {
-      title,
-      description
+    if (existingDocument.authorId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const document = await ctx.db.patch(args.id, {
+      ...rest,
     });
 
-    return form;
+    return document;
   },
 });

@@ -1,61 +1,35 @@
 "use client";
 
-import "@blocknote/core/fonts/inter.css";
-import { BlockNoteView } from "@blocknote/mantine";
-import "@blocknote/mantine/style.css";import { BlockNoteEditor } from "@blocknote/core";
-import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
 import "@blocknote/react/style.css";
-// import { useEdgeStore } from "../lib/edgestore";
-
 
 interface EditorProps {
   onChange: (value: string) => void;
   initialContent?: string;
-//   editable?: boolean;
-};
+  editable?: boolean;
+}
 
-const Editor = ({
-  onChange,
-  initialContent,
-//   editable
-}: EditorProps) => {
-//   const { resolvedTheme } = useTheme();
-//   const {edgestore} = useEdgeStore();
-  
-  const handleUpload = async (file: File) => {
-    // const response = await edgestore.publicFiles.upload({ 
-    //   file
-    // });
+const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
 
-    // return response.url;
-  }
-
-  const editor: BlockNoteEditor = useCreateBlockNote({
-    // editable,
-    initialContent: 
-      initialContent 
-      ? JSON.parse(initialContent) 
-      : undefined,
-    // onEditorContentChange: (editor) => {
-    //   onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
-    // },
-    // uploadFile: handleUpload
-  })
+    console.log(initialContent)
+  const editor: BlockNoteEditor = useBlockNote({
+    editable,
+    initialContent: initialContent ? JSON.parse(initialContent) : undefined,
+    onEditorContentChange: (editor) => {
+      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
+    },
+    // uploadFile: handleUpload,
+  });
 
   return (
     <div>
       <BlockNoteView
-      editor={editor}
-      // Removes all menus and toolbars.
-      formattingToolbar={false}
-      linkToolbar={false}
-      filePanel={false}
-      sideMenu={false}
-      slashMenu={false}
-      tableHandles={false}
-    />
+        editor={editor}
+        // theme={resolvedTheme === "dark" ? "dark" : "light"}
+      />
     </div>
-  )
-}
+  );
+};
 
 export default Editor;
