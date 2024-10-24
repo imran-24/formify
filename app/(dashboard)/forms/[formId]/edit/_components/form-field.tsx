@@ -116,6 +116,8 @@ const FormField: React.FC<FormFieldProps> = ({
       required,
       type: question.type,
       order: question.order + 1,
+      imageUrl: question.imageUrl,
+      options: items
     });
   };
 
@@ -435,16 +437,18 @@ const FormField: React.FC<FormFieldProps> = ({
               ))}
               {!published && (
                 <Button
-                  type='button'
-                  size={"lg"}
-                  variant={"ghost"}
-                  disabled={published}
-                  onClick={addOption}
-                  className='w-fit'
-                >
-                  <PlusCircle className='size-5 text-neutral-700 mr-3' />
-                  add option
-                </Button>
+                type="button"
+                size="lg"
+                variant="ghost"
+                disabled={published}
+                onClick={addOption}
+                className="w-fit p-0 hover:bg-transparent group/button"
+              >
+                <PlusCircle className="w-5 h-5 text-neutral-500 mr-1 group-hover/button:text-neutral-800 transition-colors" />
+                <span className="text-neutral-500 group-hover/button:text-neutral-800 transition-colors">
+                  Add option
+                </span>
+              </Button>
               )}
             </div>
           )}

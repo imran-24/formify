@@ -8,14 +8,15 @@ export const create = mutation({
     label: v.optional(v.string()),
     required: v.optional(v.boolean()),
     type: v.optional(v.string()),
-
+    imageUrl: v.optional(v.string()),
+    options: v.optional(v.any())
     // options: v.optional(v.array(v.string())),
   },
 
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthorized");
-    const { formId, order, label, required, type } = args;
+    const { formId, order, label, required, type, imageUrl, options } = args;
 
     if (!formId) throw new Error("Form is is required");
 
@@ -25,7 +26,21 @@ export const create = mutation({
       required: required || false,
       order: order,
       type: type || "1",
+      imageUrl: imageUrl
     });
+
+    const formFieldId = question;
+
+    if (!formFieldId) throw new Error("Formfield id is required");
+
+    if(options.length){
+      for(const option of options){
+        await ctx.db.insert("options", {
+          formFieldId,
+          optionText: option.optionText,
+        });
+      }
+    }
     return question;
   },
 });
