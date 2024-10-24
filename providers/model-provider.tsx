@@ -1,5 +1,6 @@
 "use client";
 
+import { FormUploadImageModal } from "@/components/modals/form-upload-image-modal";
 import RenameFormModal from "@/components/modals/rename-form-modal";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,7 @@ export const ModalProviders = () => {
   return (
     <>
       <RenameFormModal />
+      <FormUploadImageModal />
     </>
   );
 };

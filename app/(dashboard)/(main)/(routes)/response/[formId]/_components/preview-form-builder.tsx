@@ -1,4 +1,3 @@
-
 import React, { FormEventHandler } from "react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
@@ -7,6 +6,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import FormField from "@/app/(dashboard)/forms/[formId]/edit/_components/form-field";
+import { Loader2 } from "lucide-react";
 
 interface PreviewFormBuilderProps {
   questions: unknown[];
@@ -21,26 +21,23 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
   published,
   responseId,
   submitted,
-  onSubmit 
+  onSubmit,
 }) => {
   // const responseAnswers = useQuery(api.responseAnswers.getAnswersByResponseId, {
   //     responseId: responseId!
   // });
 
-//   const params = useParams();
-//   const { formId } = params;
+  //   const params = useParams();
+  //   const { formId } = params;
 
   const saveAnswer = useMutation(api.responseAnswer.saveAnswer);
   const submitAnswers = useMutation(api.response.update);
 
-
   const getAnswerToQuestion = (formFieldId: Id<"formFields">) => {
-    const response = useQuery(
-      api.responseAnswer.getAnswerByResponseId, {
-            responseId,
-            formFieldId,
-        }
-    );
+    const response = useQuery(api.responseAnswer.getAnswerByResponseId, {
+      responseId,
+      formFieldId,
+    });
     // if(response === undefined) return <div>Loading</div>
     return response;
   };
@@ -53,8 +50,6 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
       answer,
     });
   };
-
-
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -70,24 +65,26 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
   };
 
   return (
-    <div className="max-w-5xl w-full  mx-auto flex flex-col space-y-3">
+    <div className='max-w-5xl w-full  mx-auto flex flex-col space-y-3'>
       <form onSubmit={handleSubmit}>
         <div className='flex flex-col-reverse gap-y-2'>
           {questions.map((question: any, index) => {
-            
-            console.log(responseId)
+            // const response = getAnswerToQuestion(question._id);
+            // if (response === undefined)
+            //   return (
+            //     <div className='mt-10 flex justify-center'>
+            //       <Loader2 className=' size-8 text-neutral-500 animate-spin' />
+            //     </div>
+            //   );
 
-            const response = getAnswerToQuestion(question._id);
-            if (response === undefined) return <div>Loading</div>;
-
-            console.log(response);
+            // console.log(response);
 
             return (
               <FormField
                 key={index}
                 index={index}
                 published={published}
-                answer={response} // Pass the fetched answer.
+                // answer={response} // Pass the fetched answer.
                 responseId={responseId}
                 updateAnswer={updateAnswer}
                 question={question}

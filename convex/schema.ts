@@ -22,7 +22,8 @@ export default defineSchema({
     label: v.string(), // The question or prompt for the field
     required: v.boolean(), // Indicates if the field is mandatory
     order: v.number(), // Position of the field within the form
-    type: v.string()
+    type: v.string(),
+    imageUrl: v.optional(v.string()),
     // options: v.optional(v.array(v.string())),
   })
     .index("by_formId", ["formId"])
@@ -38,20 +39,27 @@ export default defineSchema({
     submittedAt: v.optional(v.string()), // Timestamp when the form was submitted, null if draft
   })
     .index("by_form_and_user", ["formId", "userId"])
+    .index("by_user_form_status", ["formId", "userId", "status"])
+
     .index("by_status", ["status"]),
 
   // ResponseAnswers Table
   responseAnswers: defineTable({
     responseId: v.id("responses"), // Reference to the associated response's id
     formFieldId: v.id("formFields"), // Reference to the associated form field's id
-    answer: v.string(), // The respondent's answer
+    answer: v.optional(v.string()), // The respondent's answer
+    optionIds: v.optional(v.array(v.string())), // Array of option IDs (for checkboxes) or a single option ID (for multiple choice)
   })
     .index("by_responseId", ["responseId"])
     .index("by_formFieldId", ["formFieldId"])
-    .index("by_formFieldId_responseId", ["responseId","formFieldId"])
+    .index("by_formFieldId_responseId", ["responseId", "formFieldId"])
 
     .searchIndex("search_answer", {
       searchField: "answer",
       filterFields: ["responseId", "formFieldId"],
     }),
+  options: defineTable({
+    formFieldId: v.string(), // Reference to the form field (question)
+    optionText: v.optional(v.string()), // The option text
+  }).index("by_formFieldId", ["formFieldId"]),
 });

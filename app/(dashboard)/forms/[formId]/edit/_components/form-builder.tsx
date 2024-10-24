@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useParams } from "next/navigation";
 import FormField from "./form-field";
 
 interface FormBuilderProps {
-  questions: unknown[];
+  questions: Doc<"formFields">[];
   published: boolean;
 }
 
@@ -50,18 +50,25 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ questions, published }) => {
   return (
     <div>
       <div className='flex flex-col-reverse gap-y-2'>
-        {questions.map((question: any, index) => (
-          <FormField
-            key={index}
-            index={index}
-            published={published}
-            question={question}
-            updateQuestion={updateQuestion}
-            removeQuestion={removeQuestion}
-            disabled={pending}
-            updateAnswer={() => {}}
-          />
-        ))}
+        {questions.map((question: Doc<"formFields">, index) => {
+          // console.log(question._id);
+          
+
+          // console.log(options);
+          return (
+            <FormField
+              key={index}
+              index={index}
+              published={published}
+              question={question}
+              updateQuestion={updateQuestion}
+              removeQuestion={removeQuestion}
+              disabled={pending}
+              // options={options}
+              updateAnswer={() => {}}
+            />
+          );
+        })}
         {!published && (
           <Button
             type='button'

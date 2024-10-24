@@ -5,6 +5,7 @@ import { ConvexClientProvider } from "@/providers/convex-client-provider";
 import { Toaster } from "sonner";
 
 import { ModalProviders } from "@/providers/model-provider";
+import { EdgeStoreProvider } from "../lib/edgestore";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,9 +35,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ConvexClientProvider>
-          <Toaster />
-          <ModalProviders  />
-          {children}
+          <EdgeStoreProvider>
+            <Toaster />
+            <ModalProviders />
+            {children}
+          </EdgeStoreProvider>
         </ConvexClientProvider>
       </body>
     </html>

@@ -1,12 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-
-
 export const getAnswerByResponseId = query({
   args: {
     responseId: v.optional(v.id("responses")),
-    formFieldId: v.id("formFields")
+    formFieldId: v.id("formFields"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -22,7 +20,7 @@ export const getAnswerByResponseId = query({
         q.eq("responseId", args.responseId!).eq("formFieldId", args.formFieldId)
       )
       .unique();
-      
+
     return responseAnswer;
   },
 });

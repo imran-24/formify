@@ -19,9 +19,12 @@ import type * as form from "../form.js";
 import type * as formField from "../formField.js";
 import type * as formFields from "../formFields.js";
 import type * as forms from "../forms.js";
+import type * as option from "../option.js";
+import type * as options from "../options.js";
 import type * as response from "../response.js";
 import type * as responseAnswer from "../responseAnswer.js";
 import type * as responseAnswers from "../responseAnswers.js";
+import type * as responses from "../responses.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -36,9 +39,12 @@ declare const fullApi: ApiFromModules<{
   formField: typeof formField;
   formFields: typeof formFields;
   forms: typeof forms;
+  option: typeof option;
+  options: typeof options;
   response: typeof response;
   responseAnswer: typeof responseAnswer;
   responseAnswers: typeof responseAnswers;
+  responses: typeof responses;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

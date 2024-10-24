@@ -105,7 +105,7 @@ export const update = mutation({
 
     if(existingResponse?.status === "draft"){
        const response = await ctx.db.patch(existingResponse._id, {
-         status: "submited",
+         status: "submitted",
        });
 
        return response;

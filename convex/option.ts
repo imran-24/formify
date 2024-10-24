@@ -3,44 +3,46 @@ import { mutation } from "./_generated/server";
 
 export const create = mutation({
   args: {
-    formId: v.id("forms"),
-    order: v.number(),
-    label: v.optional(v.string()),
-    required: v.optional(v.boolean()),
-    type: v.optional(v.string()),
-
-    // options: v.optional(v.array(v.string())),
+    formFieldId: v.id("formFields"),
+    optionText: v.optional(v.string()),
   },
 
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthorized");
-    const { formId, order, label, required, type } = args;
+    const { formFieldId, optionText } = args;
 
-    if (!formId) throw new Error("Form is is required");
+    if (!formFieldId) throw new Error("Formfield id is required");
 
-    const question = await ctx.db.insert("formFields", {
-      label: label || "Question",
-      formId: formId,
-      required: required || false,
-      order: order,
-      type: type || "1",
+    const option = await ctx.db.insert("options", {
+      formFieldId,
+      optionText,
     });
-    return question;
+    return option;
   },
 });
 
 export const remove = mutation({
-  args: { id: v.id("formFields") },
+  args: { id: v.id("options") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) throw new Error("Unauthorized");
 
     await ctx.db.delete(args.id);
+  },
+});
+
+export const removeMany = mutation({
+  args: { fromFieldId: v.id("formFields") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("Unauthorized");
+
     const options = await ctx.db
       .query("options")
-      .withIndex("by_formFieldId", (q) => q.eq("formFieldId", args.id))
+      .withIndex("by_formFieldId", (q) => q.eq("formFieldId", args.fromFieldId))
       .collect();
     if (options.length) {
       for (const option of options) {
@@ -81,26 +83,23 @@ export const removeImage = mutation({
 
 export const update = mutation({
   args: {
-    id: v.id("formFields"),
-    label: v.optional(v.string()),
-    required: v.optional(v.boolean()),
-    imageUrl: v.optional(v.string()),
-    type: v.optional(v.string()),
+    id: v.id("options"),
+    optionText: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    const { id, ...rest } = args;
+    const { id, optionText } = args;
 
     if (!identity) throw new Error("Unauthorized");
 
-    const existingFormField = await ctx.db.get(args.id);
+    const ExistingOption = await ctx.db.get(id);
 
-    if (!existingFormField) throw new Error("Formfield doesn't exist");
+    if (!ExistingOption) throw new Error("Option doesn't exist");
 
-    const formField = await ctx.db.patch(args.id, {
-      ...rest,
+    const option = await ctx.db.patch(id, {
+      optionText,
     });
 
-    return formField;
+    return option;
   },
 });
