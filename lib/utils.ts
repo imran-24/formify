@@ -10,5 +10,4 @@ export const questionType = [
   { label: "Paragraph", value: '2' },
   { label: "Checkboxes", value: '3' },
   { label: "Multiple Choice", value: '4' },
-  { label: "File Upload", value: '5' },
 ];

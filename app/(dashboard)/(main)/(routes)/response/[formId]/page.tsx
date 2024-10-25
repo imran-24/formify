@@ -1,17 +1,14 @@
 "use client";
 
-import FormBuilder from "@/app/(dashboard)/forms/[formId]/edit/_components/form-builder";
 import FormHeader from "@/app/(dashboard)/forms/[formId]/edit/_components/form-header";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useApiMutation } from "@/hooks/use-api-mutation";
-import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import React, { useEffect, useState } from "react";
 import PreviewFormBuilder from "./_components/preview-form-builder";
 import { Loader2 } from "lucide-react";
 import FormSubmission from "./_components/form-submission";
-import Title from "@/app/(dashboard)/forms/[formId]/edit/_components/title";
 
 interface ResponseFormPageProps {
   params: {
@@ -65,9 +62,7 @@ const ResponseFormPage = ({ params }: ResponseFormPageProps) => {
 
   if (isSubmitted)
     return (
-      <FormSubmission>
-        <Title large  initialData={form} published={true} />
-      </FormSubmission>
+      <FormSubmission />
     );
 
   return (

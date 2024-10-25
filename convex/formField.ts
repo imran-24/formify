@@ -33,7 +33,7 @@ export const create = mutation({
 
     if (!formFieldId) throw new Error("Formfield id is required");
 
-    if(options.length){
+    if(options?.length){
       for(const option of options){
         await ctx.db.insert("options", {
           formFieldId,

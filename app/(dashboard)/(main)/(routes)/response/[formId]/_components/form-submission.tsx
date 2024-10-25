@@ -1,18 +1,25 @@
 "use client";
 
-import { Doc } from "@/convex/_generated/dataModel";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
-interface FormSubmissionProps {
-  children: React.ReactNode;
-}
-const FormSubmission = ({
-  children,
-}: FormSubmissionProps) => {
+const FormSubmission = () => {
   return (
-    <div className='max-w-xl w-full mx-auto flex flex-col space-y-2 bg-purple-100 rounded-lg p-6 mt-4 border shadow'>
-      {children}
-      <p className="">Form Has been submitted.</p>
+    <div className='flex flex-col items-center justify-center h-full'>
+<Image alt='Empty' height={400} width={400} src={"/success.svg"} />
+      <h2 className='text-2xl font-semibold mt-6'>Welcome Back</h2>
+      <p className='text-sm mt-2 text-muted-foreground'>
+        Thank you for your response
+      </p>
+      <div className='mt-4'>
+        <Button size={"lg"} asChild type="button">
+          <Link href={"/"}>
+          Go back
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 };

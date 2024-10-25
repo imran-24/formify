@@ -9,7 +9,7 @@ import { Doc, Id } from "@/convex/_generated/dataModel";
 import { cn, questionType } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
 import { Copy, ImageUp, PlusCircle, Trash2, X } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactEventHandler, useEffect, useRef, useState } from "react";
 import { QuestionType } from "./type";
 import TextareaAutosize from "react-textarea-autosize";
 import { useEdgeStore } from "@/lib/edgestore";
@@ -23,7 +23,11 @@ interface FormFieldProps {
   question: any;
   answer?: any;
   responseId?: Id<"responses">;
-  updateAnswer: (formFieldId: Id<"formFields">, answer: string) => void;
+  updateAnswer: (
+    formFieldId: Id<"formFields">,
+    answer: string,
+    optionIds?: any
+  ) => void;
   updateQuestion: (
     id: Id<"formFields">,
     label?: string,
@@ -48,6 +52,13 @@ const FormField: React.FC<FormFieldProps> = ({
   disabled,
   // options,
 }) => {
+  // const answer = useQuery(api.responseAnswer.getAnswerByResponseId, {
+  //   responseId,
+  //   formFieldId: question._id,
+  // });
+
+  console.log(answer);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const create = useMutation(api.formField.create);
   const update = useMutation(api.formField.update);
@@ -67,6 +78,9 @@ const FormField: React.FC<FormFieldProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [type, setType] = useState(question.type);
   const [label, setLabel] = useState(question.label || "Question");
+  const [selected, setSelected] = useState(answer?.optionIds || []);
+  const [checkList, setCheckList] = useState(answer?.optionIds || []);
+
   const [items, setItems] = React.useState<Doc<"options">[] | undefined>(
     options
   );
@@ -80,7 +94,6 @@ const FormField: React.FC<FormFieldProps> = ({
   let PARAGRAPH = questionType[1].value === question.type;
   let CHECKBOXES = checkBoxes.value === question.type;
   let MULTIPLE_CHOICE = multipleChoice.value === question.type;
-  let FILE_UPLOAD = questionType[4];
 
   useEffect(() => {
     // Only update items if the type requires options (e.g., checkboxes or multiple choice)
@@ -117,7 +130,7 @@ const FormField: React.FC<FormFieldProps> = ({
       type: question.type,
       order: question.order + 1,
       imageUrl: question.imageUrl,
-      options: items
+      options: items,
     });
   };
 
@@ -137,20 +150,20 @@ const FormField: React.FC<FormFieldProps> = ({
     });
   };
 
-  const onUpload = async (file: File) => {
-    const response = await edgestore.publicFiles.upload({
-      file,
-    });
-    update({
-      id: question._id,
-      imageUrl: response.url,
-    });
-  };
+  // const onUpload = async (file: File) => {
+  //   const response = await edgestore.publicFiles.upload({
+  //     file,
+  //   });
+  //   update({
+  //     id: question._id,
+  //     imageUrl: response.url,
+  //   });
+  // };
 
-  const onCheck = (checked: boolean) => {
-    setRequired(checked);
-    // console.log("required:", checked, required);
-    update({ id: question._id, required: checked });
+  const onCheck = (checkList: boolean) => {
+    setRequired(checkList);
+    // console.log("required:", checkList, required);
+    update({ id: question._id, required: checkList });
   };
 
   const onChangeQuestionType = async (type: string) => {
@@ -205,23 +218,24 @@ const FormField: React.FC<FormFieldProps> = ({
   // ) => {
   //   setLabel(e.target.value);
   //   updateQuestion(question._id, label);
-  //   // const { name, value, type, checked } = e.target;
-  //   // const fieldValue = type === "checkbox" ? checked : value;
+  //   // const { name, value, type, checkList } = e.target;
+  //   // const fieldValue = type === "checkbox" ? checkList : value;
   //   // updateQuestion(index, { ...question, [name]: fieldValue });
   // };
 
   const submitAnswer = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setResponse(e.target.value);
-    updateAnswer(question._id, response);
-    // const { name, value, type, checked } = e.target;
-    // const fieldValue = type === "checkbox" ? checked : value;
-    // updateQuestion(index, { ...question, [name]: fieldValue });
+    setResponse(e.target?.value);
+    updateAnswer(question._id, response, selected);
   };
 
+  const onAnswerChange = (options: string[]) => {
+    setCheckList(options);
+    updateAnswer(question._id, response, options);
+  };
+
+  console.log(checkList);
   const onOpen = () => formImage.onOpen(question._id);
 
   const onOptionChange = (
@@ -386,18 +400,23 @@ const FormField: React.FC<FormFieldProps> = ({
           {CHECKBOXES && (
             <div className='flex flex-col space-y-4 pl-3 transition-all transform ease-in-out  duration-200'>
               {items?.map((option) => (
-                <div className='flex items-center transition-all transform ease-in-out  duration-200'>
+                <div
+                  key={option._id}
+                  className='flex items-center transition-all transform ease-in-out  duration-200'
+                >
                   <>
                     <Checkbox
                       required={required}
-                      // checked={field.value?.includes(item.id)}
-                      // onCheckedChange={(checked) => {
-                      //   return checked
-                      //     ? field.onChange([...field.value, item.id])
-                      //     : field.onChange(
-                      //         field.value?.filter((value) => value !== item.id)
-                      //       );
-                      // }}
+                      checked={checkList?.includes(option._id)}
+                      onCheckedChange={(checked) => {
+                        return checked
+                          ? onAnswerChange([...checkList, option._id])
+                          : onAnswerChange(
+                              checkList?.filter(
+                                (value: string) => value !== option._id
+                              )
+                            );
+                      }}
                     />
                     {!published ? (
                       <div className='flex items-center space-x-2 w-full'>
@@ -437,18 +456,18 @@ const FormField: React.FC<FormFieldProps> = ({
               ))}
               {!published && (
                 <Button
-                type="button"
-                size="lg"
-                variant="ghost"
-                disabled={published}
-                onClick={addOption}
-                className="w-fit p-0 hover:bg-transparent group/button"
-              >
-                <PlusCircle className="w-5 h-5 text-neutral-500 mr-1 group-hover/button:text-neutral-800 transition-colors" />
-                <span className="text-neutral-500 group-hover/button:text-neutral-800 transition-colors">
-                  Add option
-                </span>
-              </Button>
+                  type='button'
+                  size='lg'
+                  variant='ghost'
+                  disabled={published}
+                  onClick={addOption}
+                  className='w-fit p-0 hover:bg-transparent group/button'
+                >
+                  <PlusCircle className='w-5 h-5 text-neutral-500 mr-2 group-hover/button:text-neutral-800 transition-colors' />
+                  <span className='text-neutral-500 group-hover/button:text-neutral-800 transition-colors'>
+                    Add option
+                  </span>
+                </Button>
               )}
             </div>
           )}
@@ -460,7 +479,8 @@ const FormField: React.FC<FormFieldProps> = ({
                   <div className='flex items-center spa transition-all transform ease-in-out  duration-200'>
                     <>
                       <RadioGroupItem
-                        
+                        checked={checkList?.includes(option._id)}
+                        onClickCapture={() => onAnswerChange([option._id])}
                         value={option.optionText!}
                         id={option._id}
                       />
@@ -504,14 +524,16 @@ const FormField: React.FC<FormFieldProps> = ({
               {!published && (
                 <Button
                   type='button'
-                  size={"lg"}
-                  variant={"ghost"}
+                  size='lg'
+                  variant='ghost'
                   disabled={published}
                   onClick={addOption}
-                  className='w-fit'
+                  className='w-fit p-0 hover:bg-transparent group/button'
                 >
-                  <PlusCircle className='size-5 text-neutral-700 mr-3' />
-                  add option
+                  <PlusCircle className='w-5 h-5 text-neutral-500 mr-2 group-hover/button:text-neutral-800 transition-colors' />
+                  <span className='text-neutral-500 group-hover/button:text-neutral-800 transition-colors'>
+                    Add option
+                  </span>
                 </Button>
               )}
             </div>
@@ -559,7 +581,7 @@ const FormField: React.FC<FormFieldProps> = ({
           <Input
             type='checkbox'
             name='required'
-            checked={question.required}
+            checkList={question.required}
             onChange={handleChange}
             className='h-4 w-4 text-blue-600 border-gray-300 rounded'
           />

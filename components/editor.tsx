@@ -1,34 +1,41 @@
 "use client";
 
-import { BlockNoteEditor } from "@blocknote/core";
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
-import "@blocknote/react/style.css";
-
+import "@blocknote/core/fonts/inter.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/mantine/style.css";
+import { useCreateBlockNote } from "@blocknote/react";
+import * as Button from "@/components/ui/button";
+import * as Select from "@/components/ui/select";
 interface EditorProps {
   onChange: (value: string) => void;
-  initialContent?: string;
+  initialContent?: string | undefined;
   editable?: boolean;
 }
 
-const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
-
-    console.log(initialContent)
-  const editor: BlockNoteEditor = useBlockNote({
-    editable,
-    initialContent: initialContent ? JSON.parse(initialContent) : undefined,
-    onEditorContentChange: (editor) => {
-      onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
-    },
-    // uploadFile: handleUpload,
+const Editor = ({ onChange, editable, initialContent }: EditorProps) => {
+  const editor = useCreateBlockNote({
+    initialContent: initialContent ? JSON.parse(initialContent) : [
+      {
+        type: "paragraph",
+        content: "Description",
+      }],
+    
   });
 
   return (
-    <div>
-      <BlockNoteView
-        editor={editor}
-        // theme={resolvedTheme === "dark" ? "dark" : "light"}
-      />
-    </div>
+    <BlockNoteView
+      editable={editable}
+      editor={editor}
+      formattingToolbar={true}
+      linkToolbar={false}
+      filePanel={false}
+      sideMenu={false}
+      slashMenu={true}
+      tableHandles={false}
+      onChange={() =>
+        onChange(JSON.stringify(editor.document, null, 2))
+      }
+    />
   );
 };
 

@@ -41,9 +41,9 @@ const Navbar = ({initialData, published}: NavbarProps) => {
 
   return (
     <>
-      <nav className='bg-background dark:bg-[#1F1F1F] p-3 w-full flex items-center gap-x-4'>
+      <nav className='bg-background dark:bg-[#1F1F1F] p-3 px-5 w-full flex items-center gap-x-4'>
         <div className='flex items-center justify-between w-full'>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center">
             <Logo />
             <Title published={published}  initialData={initialData} />
           </div>

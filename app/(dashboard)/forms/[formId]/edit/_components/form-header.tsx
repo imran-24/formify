@@ -28,7 +28,7 @@ const FormHeader = ({ initialData, published = false }: FormHeaderProps) => {
 //     });
 //   };
   return (
-    <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg p-6 mt-4 border shadow'>
+    <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg px-0 pt-6 pb-2  mt-4 border shadow'>
       <Title published={published} large={true} initialData={initialData} />
       <Description published={published} initialData={initialData} />
       {/* <Editor onChange={onChange} initialContent={initialData.description} /> */}
@@ -40,7 +40,7 @@ export default FormHeader;
 
 FormHeader.Skeleton = function FormHeaderSkeleton() {
   return (
-    <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg p-6 mt-4 border shadow'>
+    <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg p-6 mt-4 border shadow '>
       <Skeleton className='flex items-center gap-x-1 h-14 w-48'></Skeleton>
       <Skeleton className='flex items-center gap-x-1 h-10 w-full'></Skeleton>
     </div>

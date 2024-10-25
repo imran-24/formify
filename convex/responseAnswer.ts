@@ -41,10 +41,11 @@ export const saveAnswer = mutation({
     responseId: v.id("responses"),
     formFieldId: v.id("formFields"),
     answer: v.string(),
+    optionIds: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    const { responseId, formFieldId, answer } = args;
+    const { responseId, formFieldId, answer, optionIds } = args;
 
     if (!identity) throw new Error("Unauthorized");
 
@@ -62,12 +63,14 @@ export const saveAnswer = mutation({
     if (existingAnswer) {
       await ctx.db.patch(existingAnswer._id, {
         answer,
+        optionIds
       });
     } else {
       await ctx.db.insert("responseAnswers", {
         formFieldId,
         responseId,
         answer,
+        optionIds
       });
     }
   },

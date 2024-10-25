@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import FormField from "@/app/(dashboard)/forms/[formId]/edit/_components/form-field";
 import { Loader2 } from "lucide-react";
+import { any } from "zod";
 
 interface PreviewFormBuilderProps {
   questions: unknown[];
@@ -42,12 +43,13 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
     return response;
   };
 
-  const updateAnswer = (formFieldId: Id<"formFields">, answer: string) => {
+  const updateAnswer = (formFieldId: Id<"formFields">, answer: string, options?: any) => {
     if (!responseId) throw Error("Response id is required");
     saveAnswer({
       responseId,
       formFieldId,
       answer,
+      optionIds: options
     });
   };
 
@@ -69,13 +71,13 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
       <form onSubmit={handleSubmit}>
         <div className='flex flex-col-reverse gap-y-2'>
           {questions.map((question: any, index) => {
-            // const response = getAnswerToQuestion(question._id);
-            // if (response === undefined)
-            //   return (
-            //     <div className='mt-10 flex justify-center'>
-            //       <Loader2 className=' size-8 text-neutral-500 animate-spin' />
-            //     </div>
-            //   );
+            const response = getAnswerToQuestion(question._id);
+            if (response === undefined)
+              return (
+                <div className='mt-10 flex justify-center'>
+                  <Loader2 className=' size-8 text-neutral-500 animate-spin' />
+                </div>
+              );
 
             // console.log(response);
 
@@ -84,7 +86,7 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
                 key={index}
                 index={index}
                 published={published}
-                // answer={response} // Pass the fetched answer.
+                answer={response} // Pass the fetched answer.
                 responseId={responseId}
                 updateAnswer={updateAnswer}
                 question={question}
@@ -97,10 +99,10 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
         {published && (
           <Button
             type='submit'
-            variant={"submit"}
+            // variant={"submit"}
             size={"lg"}
             // disabled={!published}
-            className={cn("my-2 font-medium")}
+            className={cn("my-2 rounded-full border-2 h-12")}
           >
             Submit
           </Button>

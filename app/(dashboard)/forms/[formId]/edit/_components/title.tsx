@@ -53,7 +53,7 @@ const Title = ({ initialData, large, published }: TitleProps) => {
   };
 
   return (
-    <div className='flex items-center gap-x-1'>
+    <div className='flex items-center gap-x-1 px-6'>
       {/* {!!initialData.icon && <p>{initialData.icon}</p>} */}
       {isEditing ? (
         <Input
