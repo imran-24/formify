@@ -40,7 +40,7 @@ const FormEditPage = ({ params }: FormEditPageProps) => {
   let isPublish = form?.isPublished || false;
   // let isEditable = (isEditor && !isPublish) || false;
 
-  if (form === null) return <div>Not Found</div>;
+  if (form === null) throw new CustomError(errorList["notFound"]);
 
   if (form === undefined || formFields === undefined) {
     return (

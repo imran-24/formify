@@ -292,20 +292,6 @@ const FormField: React.FC<FormFieldProps> = ({
           </div>
         )}
       </div>
-      {/* <select
-            name="fieldType"
-            value={question.fieldType}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          >
-            <option value="TEXT">Text</option>
-            <option value="MULTIPLE_CHOICE">Multiple Choice</option>
-            <option value="CHECKBOX">Checkboxes</option>
-            <option value="DROPDOWN">Dropdown</option>
-            <option value="DATE">Date</option>
-            <option value="FILE_UPLOAD">File Upload</option>
-          </select> */}
-
       <div className='space-y-4 relative flex flex-col'>
         {published ? (
           <div className=''>
@@ -420,7 +406,7 @@ const FormField: React.FC<FormFieldProps> = ({
                 >
                   <>
                     <Checkbox
-                      required={required}
+                      required={required && checkList?.length === 0}
                       disabled={!published || disabled}
                       checked={checkList?.includes(option._id)}
                       onCheckedChange={(checked) => {

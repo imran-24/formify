@@ -35,6 +35,28 @@ export const create = mutation({
   },
 });
 
+export const getByIdAndStatus = query({
+  args: {
+    formId: v.id("forms"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
+
+    const form = await ctx.db.get(args.formId);
+
+    if (!form) {
+      return null;
+    }
+
+    if (!form.isPublished) {
+      return null;
+    }
+
+    return form;
+  },
+});
+
 export const getById = query({
   args: {
     formId: v.id("forms"),
@@ -53,7 +75,9 @@ export const getById = query({
     }
 
     if (!identity) throw new CustomError(errorList["unauthorized"]);
-    
+
+    if(form.authorId !== identity.subject) return null;
+
     return form;
   },
 });

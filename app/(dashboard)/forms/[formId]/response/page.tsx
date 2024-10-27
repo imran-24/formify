@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import PreviewFormBuilder from "./_components/preview-form-builder";
 import { Loader2 } from "lucide-react";
 import FormSubmission from "./_components/form-submission";
-import { useUser } from "@clerk/nextjs";
+import { CustomError, errorList } from "@/lib/utils";
 
 interface ResponseFormPageProps {
   params: {
@@ -21,7 +21,7 @@ const ResponseFormPage = ({ params }: ResponseFormPageProps) => {
   const [responseId, setResponseId] = useState<Id<"responses">>();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const form = useQuery(api.form.getById, {
+  const form = useQuery(api.form.getByIdAndStatus, {
     formId: params.formId,
   });
 
@@ -58,8 +58,10 @@ const ResponseFormPage = ({ params }: ResponseFormPageProps) => {
     );
   }
 
+  console.log(form);
+
   if (form === null) {
-    return <div>Not found</div>;
+    throw new CustomError(errorList["notFound"]);
   }
 
 
