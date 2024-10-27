@@ -18,26 +18,11 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ questions, published }) => {
 
   const create = useMutation(api.formField.create);
   const { mutate, pending } = useApiMutation(api.formField.remove);
-  const update = useMutation(api.formField.update);
 
   const addQuestion = () => {
     create({
       formId: formId as Id<"forms">,
       order: questions.length,
-    });
-  };
-
-  const updateQuestion = (
-    id: Id<"formFields">,
-    label?: string,
-    required?: boolean,
-    type?: string
-  ) => {
-    update({
-      id,
-      label,
-      required,
-      type,
     });
   };
 
@@ -61,7 +46,6 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ questions, published }) => {
               index={index}
               published={published}
               question={question}
-              updateQuestion={updateQuestion}
               removeQuestion={removeQuestion}
               disabled={pending}
               // options={options}

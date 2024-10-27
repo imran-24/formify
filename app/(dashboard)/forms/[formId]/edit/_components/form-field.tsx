@@ -28,12 +28,12 @@ interface FormFieldProps {
     answer: string,
     optionIds?: any
   ) => void;
-  updateQuestion: (
-    id: Id<"formFields">,
-    label?: string,
-    required?: boolean,
-    type?: string
-  ) => void;
+  // updateQuestion: (
+  //   id: Id<"formFields">,
+  //   label?: string,
+  //   required?: boolean,
+  //   type?: string
+  // ) => void;
   published: boolean;
   removeQuestion: (formId: Id<"formFields">) => void;
   disabled?: boolean;
@@ -44,7 +44,7 @@ const FormField: React.FC<FormFieldProps> = ({
   index,
   answer,
   question,
-  updateQuestion,
+  // updateQuestion,
   removeQuestion,
   updateAnswer,
   responseId,
@@ -52,12 +52,6 @@ const FormField: React.FC<FormFieldProps> = ({
   disabled,
   // options,
 }) => {
-  // const answer = useQuery(api.responseAnswer.getAnswerByResponseId, {
-  //   responseId,
-  //   formFieldId: question._id,
-  // });
-
-  console.log(answer);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const create = useMutation(api.formField.create);
@@ -67,6 +61,7 @@ const FormField: React.FC<FormFieldProps> = ({
   const updateOption = useMutation(api.option.update);
   const removeOption = useMutation(api.option.remove);
   const removeManyOption = useMutation(api.option.removeMany);
+  const updateQuestion = useMutation(api.formField.update);
 
   let options = useQuery(api.options.get, {
     formFieldId: question._id,
@@ -117,9 +112,29 @@ const FormField: React.FC<FormFieldProps> = ({
     setIsEditing(false);
   };
 
+  const onUpdateQuestion = (
+    id: Id<"formFields">,
+    label?: string,
+    required?: boolean,
+    type?: string
+  ) => {
+    updateQuestion({
+      id,
+      label,
+      required,
+      type,
+    });
+  };
+
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLabel(event.target.value);
-    update({ id: question._id, label });
+    updateQuestion({
+      id: question._id,
+      label: event.target.value,
+      required,
+      type,
+    });
+    console.log(event.target.value)
   };
 
   const onCopy = () => {
@@ -162,7 +177,6 @@ const FormField: React.FC<FormFieldProps> = ({
 
   const onCheck = (checkList: boolean) => {
     setRequired(checkList);
-    // console.log("required:", checkList, required);
     update({ id: question._id, required: checkList });
   };
 
@@ -227,7 +241,7 @@ const FormField: React.FC<FormFieldProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setResponse(e.target?.value);
-    updateAnswer(question._id, response, selected);
+    updateAnswer(question._id, e.target.value, selected);
   };
 
   const onAnswerChange = (options: string[]) => {
@@ -235,7 +249,6 @@ const FormField: React.FC<FormFieldProps> = ({
     updateAnswer(question._id, response, options);
   };
 
-  console.log(checkList);
   const onOpen = () => formImage.onOpen(question._id);
 
   const onOptionChange = (

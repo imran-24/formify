@@ -55,7 +55,6 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
                 updateAnswer={() => {}}
                 question={question}
                 removeQuestion={() => {}}
-                updateQuestion={() => {}}
                 disabled={true}
               />
             );
