@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import FormField from "@/app/(dashboard)/forms/[formId]/edit/_components/form-field";
 import { Loader2 } from "lucide-react";
-import { any } from "zod";
 
 interface PreviewFormBuilderProps {
   questions: unknown[];
@@ -36,7 +35,7 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
 
   const getAnswerToQuestion = (formFieldId: Id<"formFields">) => {
     const response = useQuery(api.responseAnswer.getAnswerByResponseId, {
-      responseId,
+      responseId: responseId!,
       formFieldId,
     });
     // if(response === undefined) return <div>Loading</div>

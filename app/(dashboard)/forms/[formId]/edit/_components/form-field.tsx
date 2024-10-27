@@ -371,11 +371,11 @@ const FormField: React.FC<FormFieldProps> = ({
               required={required}
               placeholder={"Short answer"}
               className='ring-0 outline-none w-1/2  shadow-none border-x-0 border-t-0 rounded-none  
-            focus-visible:ring-0
+            focus-visible:ring-0 disabled:text-black disabled:opacity-100
             focus-visible:border-purple-500
             transition-colors
             border-b-2'
-              disabled={!published}
+              disabled={!published || disabled}
             />
           )}
           {PARAGRAPH && (
@@ -388,13 +388,14 @@ const FormField: React.FC<FormFieldProps> = ({
             py-2
             text-sm
             disabled:cursor-not-allowed
+            disabled:text-black disabled:opacity-100
             placeholder:text-sm placeholder:text-neutral-300   placeholder:font-normal
             border-b-2 '
               value={response}
               onChange={submitAnswer}
               required={required}
               placeholder={"Paragraph"}
-              disabled={!published}
+              disabled={!published || disabled}
             />
           )}
           {CHECKBOXES && (
@@ -407,6 +408,7 @@ const FormField: React.FC<FormFieldProps> = ({
                   <>
                     <Checkbox
                       required={required}
+                      disabled={!published || disabled}
                       checked={checkList?.includes(option._id)}
                       onCheckedChange={(checked) => {
                         return checked
@@ -474,7 +476,7 @@ const FormField: React.FC<FormFieldProps> = ({
 
           {MULTIPLE_CHOICE && (
             <div className='flex flex-col space-y-4 transition-all pl-3 transform ease-in-out  duration-200'>
-              <RadioGroup required={required}>
+              <RadioGroup required={required} disabled={!published || disabled}>
                 {items?.map((option) => (
                   <div className='flex items-center spa transition-all transform ease-in-out  duration-200'>
                     <>

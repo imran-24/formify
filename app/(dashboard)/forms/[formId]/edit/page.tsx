@@ -12,6 +12,7 @@ import { Loading } from "@/components/auth/loading";
 import { Loader, Loader2 } from "lucide-react";
 import FormBuilder from "./_components/form-builder";
 import { useEffect, useState } from "react";
+import { CustomError, errorList } from "@/lib/utils";
 
 interface FormEditPageProps {
   params: {
@@ -25,20 +26,19 @@ const FormEditPage = ({ params }: FormEditPageProps) => {
     formId: params.formId,
   });
 
+  const { user } = useUser();
+
   const formFields = useQuery(api.formFields.get, {
     formId: params.formId,
   });
-
-  const { user } = useUser();
-
   // useEffect(() =>{
   //   if(form?.isPublished)
   //   setIsPublished(form.isPublished)
   // },[form?.isPublished])
 
-  const isEditor = form?.authorId === user?.id;
+  // const isEditor = form?.authorId === user?.id;
   let isPublish = form?.isPublished || false;
-  let isEditable = (isEditor && !isPublish) || false;
+  // let isEditable = (isEditor && !isPublish) || false;
 
   if (form === null) return <div>Not Found</div>;
 
@@ -59,36 +59,25 @@ const FormEditPage = ({ params }: FormEditPageProps) => {
     );
   }
 
+  if (user?.id !== form?.authorId) {
+    throw new CustomError(errorList["forbidden"]);
+  }
 
-  //  if (formFields === undefined) {
-  //   return (
-  //     <main className='h-full max-w-full'>
-  //       <div className='h-full flex flex-col '>
-  //         <Navbar.Skeleton />
-  //         <main className='bg-purple-50 w-full h-full px-6 lg:px-0'>
-  //           <FormHeader.Skeleton />
-  //           {/* <QuestionField.Skeleton /> */}
-  //         </main>
-  //       </div>
-  //     </main>
-  //   );
-  // }
-
-    return (
-      <div className='h-full max-w-full'>
-        <div className='h-full flex flex-col '>
-          <Navbar published={isPublish}  initialData={form} />
-          <div className='bg-purple-50 w-full h-full px-6 lg:px-0'>
-            <FormHeader initialData={form} published={isPublish} />
-            <div className='max-w-5xl w-full  mx-auto flex flex-col py-4 space-y-3'>
-              <div>
-                <FormBuilder published={isPublish} questions={formFields} />
-              </div>
+  return (
+    <div className='h-full max-w-full'>
+      <div className='h-full flex flex-col '>
+        <Navbar published={isPublish} initialData={form} />
+        <div className='bg-purple-50 w-full h-full px-6 lg:px-0'>
+          <FormHeader initialData={form} published={isPublish} />
+          <div className='max-w-5xl w-full  mx-auto flex flex-col py-4 space-y-3'>
+            <div>
+              <FormBuilder published={isPublish} questions={formFields} />
             </div>
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
 };
 
 export default FormEditPage;

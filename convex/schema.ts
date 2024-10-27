@@ -39,7 +39,7 @@ export default defineSchema({
     submittedAt: v.optional(v.string()), // Timestamp when the form was submitted, null if draft
   })
     .index("by_form_and_user", ["formId", "userId"])
-    .index("by_user_form_status", ["formId", "userId", "status"])
+    .index("by_form_status", ["formId", "status"])
 
     .index("by_status", ["status"]),
 

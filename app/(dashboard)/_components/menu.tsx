@@ -70,7 +70,7 @@ export const Menu = ({ formId }: MenuProps) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href={`/responses/${formId}`} className='flex items-center px-3'>
+          <Link href={`/forms/${formId}/responses`} className='flex items-center px-3'>
             <MessageSquareText className='h-4 w-4 mr-2' />
             Responses
           </Link>

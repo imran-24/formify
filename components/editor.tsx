@@ -24,6 +24,7 @@ const Editor = ({ onChange, editable, initialContent }: EditorProps) => {
 
   return (
     <BlockNoteView
+      theme={"light"}
       editable={editable}
       editor={editor}
       formattingToolbar={true}

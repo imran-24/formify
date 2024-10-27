@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { CustomError, errorList } from "../lib/utils";
 
 export const create = mutation({
   args: {
@@ -9,10 +10,10 @@ export const create = mutation({
 
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
     const { formFieldId, optionText } = args;
 
-    if (!formFieldId) throw new Error("Formfield id is required");
+    if (!formFieldId) throw new CustomError(errorList["badRequest"]);
 
     const option = await ctx.db.insert("options", {
       formFieldId,
@@ -27,7 +28,7 @@ export const remove = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
     await ctx.db.delete(args.id);
   },
@@ -38,7 +39,7 @@ export const removeMany = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
     const options = await ctx.db
       .query("options")
@@ -58,20 +59,13 @@ export const removeImage = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthenticated");
+      throw new CustomError(errorList["unauthorized"]);
     }
-
-    const userId = identity.subject;
-
     const existingFormField = await ctx.db.get(args.id);
 
     if (!existingFormField) {
-      throw new Error("Not found");
+      throw new CustomError(errorList["notFound"]);
     }
-
-    // if (existingDocument. !== userId) {
-    //   throw new Error("Unauthorized");
-    // }
 
     const formField = await ctx.db.patch(args.id, {
       imageUrl: undefined,
@@ -90,11 +84,11 @@ export const update = mutation({
     const identity = await ctx.auth.getUserIdentity();
     const { id, optionText } = args;
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
     const ExistingOption = await ctx.db.get(id);
 
-    if (!ExistingOption) throw new Error("Option doesn't exist");
+    if (!ExistingOption) throw new CustomError(errorList["notFound"]);
 
     const option = await ctx.db.patch(id, {
       optionText,

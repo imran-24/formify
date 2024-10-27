@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { CustomError, errorList } from "../lib/utils";
 
 export const create = mutation({
   args: {
@@ -15,10 +16,10 @@ export const create = mutation({
 
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
     const { formId, order, label, required, type, imageUrl, options } = args;
 
-    if (!formId) throw new Error("Form is is required");
+    if (!formId) throw new CustomError(errorList["badRequest"]);
 
     const question = await ctx.db.insert("formFields", {
       label: label || "Question",
@@ -31,7 +32,7 @@ export const create = mutation({
 
     const formFieldId = question;
 
-    if (!formFieldId) throw new Error("Formfield id is required");
+    if (!formFieldId) throw new CustomError(errorList["notFound"]);
 
     if(options?.length){
       for(const option of options){
@@ -50,8 +51,14 @@ export const remove = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
+    const existingFormField = await ctx.db.get(args.id);
+
+    if (!existingFormField) {
+      throw new CustomError(errorList["notFound"]);
+    }
+    
     await ctx.db.delete(args.id);
     const options = await ctx.db
       .query("options")
@@ -71,20 +78,14 @@ export const removeImage = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthenticated");
+      throw new CustomError(errorList["unauthorized"]);
     }
-
-    const userId = identity.subject;
 
     const existingFormField = await ctx.db.get(args.id);
 
     if (!existingFormField) {
-      throw new Error("Not found");
+     throw new CustomError(errorList["notFound"]);
     }
-
-    // if (existingDocument. !== userId) {
-    //   throw new Error("Unauthorized");
-    // }
 
     const formField = await ctx.db.patch(args.id, {
       imageUrl: undefined,
@@ -106,11 +107,11 @@ export const update = mutation({
     const identity = await ctx.auth.getUserIdentity();
     const { id, ...rest } = args;
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
     const existingFormField = await ctx.db.get(args.id);
 
-    if (!existingFormField) throw new Error("Formfield doesn't exist");
+    if (!existingFormField) throw new CustomError(errorList["notFound"]);
 
     const formField = await ctx.db.patch(args.id, {
       ...rest,

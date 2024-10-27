@@ -6,6 +6,8 @@ import { useQuery } from "convex/react";
 import { useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import Navbar from "@/app/(dashboard)/forms/[formId]/edit/_components/navbar";
+import ResponseList from "./response-list";
+import { CustomError, errorList } from "@/lib/utils";
 
 interface FormResponsesPageProps {
   params: {
@@ -50,7 +52,7 @@ const FormResponsesPage = ({ params }: FormResponsesPageProps) => {
   }
 
   if (user?.id !== form?.authorId) {
-    throw new Error("You are not allowed", { cause: 403 });
+    throw new CustomError(errorList["forbidden"])
   }
 
   console.log(responses);
@@ -59,8 +61,18 @@ const FormResponsesPage = ({ params }: FormResponsesPageProps) => {
       <div className='h-full flex flex-col '>
         <Navbar published={isPublish} initialData={form} />
         <div className='bg-purple-50 w-full h-full px-6 lg:px-0'>
-          <div className='max-w-5xl w-full  mx-auto flex flex-col py-4 space-y-3'>
-            {responses.length === 0 ? <div>Not responses yet</div> : <div>Show response</div>}
+          <div className='max-w-5xl w-full  mx-auto flex items-center justify-between  py-4 '>
+            <h2 className='text-3xl font-medium'>
+              {responses.length}{" "}
+              {responses.length > 0 ? "Responses" : "Response"}
+            </h2>
+            <ResponseList
+              formId={params.formId}
+              list={responses}
+              align='center'
+              side='bottom'
+              sideOffset={10}
+            />
           </div>
         </div>
       </div>

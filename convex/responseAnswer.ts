@@ -1,18 +1,19 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { CustomError, errorList } from "../lib/utils";
 
 export const getAnswerByResponseId = query({
   args: {
-    responseId: v.optional(v.id("responses")),
+    responseId: v.id("responses"),
     formFieldId: v.id("formFields"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
     const { responseId, formFieldId } = args;
 
     if (!responseId) return undefined;
-    if (!formFieldId) throw new Error("Form field id is required");
+    if (!formFieldId) throw new CustomError(errorList["badRequest"]);
 
     const responseAnswer = await ctx.db
       .query("responseAnswers")
@@ -30,7 +31,7 @@ export const remove = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
     await ctx.db.delete(args.id);
   },
@@ -47,11 +48,11 @@ export const saveAnswer = mutation({
     const identity = await ctx.auth.getUserIdentity();
     const { responseId, formFieldId, answer, optionIds } = args;
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
-    if (!formFieldId) throw new Error("Form field id is required");
+    if (!formFieldId) throw new CustomError(errorList["badRequest"]);
 
-    if (!responseId) throw new Error("Response id is required");
+    if (!responseId) throw new CustomError(errorList["badRequest"]);
 
     const existingAnswer = await ctx.db
       .query("responseAnswers")

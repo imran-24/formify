@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import {CustomError, errorList} from "../lib/utils";
 
 const images = [
   "/placefolders/1.svg",
@@ -19,7 +20,7 @@ export const create = mutation({
   args: { title: v.string() },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
 
     const randomImage = images[Math.floor(Math.random() * images.length)];
 
@@ -51,14 +52,8 @@ export const getById = query({
       return form;
     }
 
-    if (!identity) throw new Error("Not authenticated");
-
-    const userId = identity.subject;
-
-    if (form.authorId !== userId) {
-      throw new Error("Unauthorized");
-    }
-
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
+    
     return form;
   },
 });
@@ -68,7 +63,17 @@ export const remove = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
+    
+    const existingForm = await ctx.db.get(args.id);
+
+    if (!existingForm) {
+      throw new CustomError(errorList["notFound"]);
+    }
+
+    if (existingForm.authorId !== identity.subject) {
+      throw new CustomError(errorList["forbidden"]);
+    }
 
     await ctx.db.delete(args.id);
   },
@@ -85,7 +90,7 @@ export const update = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthenticated");
+      throw new CustomError(errorList["unauthorized"]);
     }
 
     const userId = identity.subject;
@@ -95,11 +100,11 @@ export const update = mutation({
     const existingDocument = await ctx.db.get(args.id);
 
     if (!existingDocument) {
-      throw new Error("Not found");
+      throw new CustomError(errorList["notFound"]);
     }
 
     if (existingDocument.authorId !== userId) {
-      throw new Error("Unauthorized");
+      throw new CustomError(errorList["forbidden"]);
     }
 
     const document = await ctx.db.patch(args.id, {

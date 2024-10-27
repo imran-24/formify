@@ -28,7 +28,7 @@ export const Publish = ({
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const url = `${origin}/response/${initialData._id}`;
+  const url = `${origin}/forms/${initialData._id}/response`;
 
   const onPublish = () => {
     setIsSubmitting(true);
@@ -57,8 +57,8 @@ export const Publish = ({
 
     toast.promise(promise, {
       loading: "Unpublishing...",
-      success: "Note unpublished",
-      error: "Failed to unpublish note.",
+      success: "Form unpublished",
+      error: "Failed to unpublish form.",
     });
   };
 
@@ -130,7 +130,7 @@ export const Publish = ({
               className="h-8 w-8 text-muted-foreground mb-2"
             />
             <p className="text-sm font-medium mb-2">
-              Publish this note
+              Publish this form
             </p>
             <span className="text-xs text-muted-foreground mb-4">
               Share your work with others.
