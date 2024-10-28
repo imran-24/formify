@@ -14,17 +14,17 @@ const SearchInput = () => {
         setSearch(e.target.value);
     }
 
-    useEffect(() => {
-        if(debouncedValue[0]){
-            const url = qs.stringifyUrl({
-                url: "/",
-                query: {
-                    search: debouncedValue[0]
-                }
-            }, {skipEmptyString: true, skipNull: true});
-            router.push(url);
-        }
-    },[debouncedValue, router]);
+    // useEffect(() => {
+    //     if(debouncedValue[0]){
+    //         const url = qs.stringifyUrl({
+    //             url: "/",
+    //             query: {
+    //                 search: debouncedValue[0]
+    //             }
+    //         }, {skipEmptyString: true, skipNull: true});
+    //         router.push(url);
+    //     }
+    // },[debouncedValue, router]);
 
   return (
     <div className='relative flex items-center max-w-[420px] lg:max-w-[580px]  mx-auto'>
