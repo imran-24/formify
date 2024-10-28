@@ -15,13 +15,15 @@ const SearchInput = () => {
     }
 
     useEffect(() => {
-        const url = qs.stringifyUrl({
-            url: "/",
-            query: {
-                search: debouncedValue[0]
-            }
-        }, {skipEmptyString: true, skipNull: true});
-        router.push(url);
+        if(debouncedValue[0]){
+            const url = qs.stringifyUrl({
+                url: "/",
+                query: {
+                    search: debouncedValue[0]
+                }
+            }, {skipEmptyString: true, skipNull: true});
+            router.push(url);
+        }
     },[debouncedValue, router]);
 
   return (

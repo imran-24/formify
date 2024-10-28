@@ -15,3 +15,15 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+
+// const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+
+// export default clerkMiddleware(async (auth, req) => {
+//   if (
+//     isAdminRoute(req) &&
+//     (await auth()).sessionClaims?.metadata?.role !== "admin"
+//   ) {
+//     const url = new URL("/", req.url);
+//     return NextResponse.redirect(url);
+//   }
+// });

@@ -17,6 +17,14 @@ export default defineSchema({
       filterFields: ["authorId"],
     }),
 
+    userFavorites: defineTable({
+      formId: v.id("forms"),
+      authorId: v.string(),
+    })
+    .index("by_form", ["formId"])
+    .index("by_user",["authorId"])
+    .index("by_user_form", ["formId", "authorId"]),
+
   formFields: defineTable({
     formId: v.id("forms"), // Reference to the associated form's id
     label: v.string(), // The question or prompt for the field

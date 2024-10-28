@@ -17,7 +17,9 @@ interface FormListProps {
 }
 
 const FormList = ({ query, authId }: FormListProps) => {
-  const data = useQuery(api.forms.get, { authorId: authId });
+  const data = useQuery(api.forms.get, { authorId: authId, search: query.search, favorites: query.favorites });
+
+  // const data: any[] = []
 
   if (data === undefined) {
     return (
@@ -32,7 +34,6 @@ const FormList = ({ query, authId }: FormListProps) => {
           <FormCard.Skeleton />
           <FormCard.Skeleton />
           <FormCard.Skeleton />
-
         </div>
       </div>
     );
@@ -45,7 +46,6 @@ const FormList = ({ query, authId }: FormListProps) => {
   if (!data.length && query.search) {
     return <EmptySearch />;
   }
-
 
   if (!data.length) {
     return <EmptyForm />;
@@ -67,7 +67,7 @@ const FormList = ({ query, authId }: FormListProps) => {
             authorId={form.authorId}
             createdAt={form._creationTime}
             imageUrl={form.imageUrl}
-            isFavorite={false}
+            isFavorite={form.isFavorite}
           />
         ))}
       </div>

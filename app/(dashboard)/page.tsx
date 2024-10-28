@@ -12,8 +12,14 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ searchParams }: DashboardPageProps) {
-  const { userId } = useAuth();
+  const { userId, has } = useAuth();
+  
+  // if (!has) return null
 
+  // const isAdmin = has({ role: 'org:member' })
+
+  // console.log(isAdmin);
+  
   return (
     <div className='flex flex-col p-6 flex-1 h-full'>
       <Navbar />

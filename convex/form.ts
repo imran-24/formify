@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import {CustomError, errorList} from "../lib/utils";
+import { CustomError, errorList } from "../lib/utils";
 
 const images = [
   "/placefolders/1.svg",
@@ -76,7 +76,7 @@ export const getById = query({
 
     if (!identity) throw new CustomError(errorList["unauthorized"]);
 
-    if(form.authorId !== identity.subject) return null;
+    if (form.authorId !== identity.subject) return null;
 
     return form;
   },
@@ -88,7 +88,7 @@ export const remove = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) throw new CustomError(errorList["unauthorized"]);
-    
+
     const existingForm = await ctx.db.get(args.id);
 
     if (!existingForm) {
@@ -97,6 +97,17 @@ export const remove = mutation({
 
     if (existingForm.authorId !== identity.subject) {
       throw new CustomError(errorList["forbidden"]);
+    }
+
+    const existingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_form", (q) =>
+        q.eq("formId", args.id).eq("authorId", identity.subject)
+      )
+      .unique();
+
+    if (existingFavorite) {
+      await ctx.db.delete(existingFavorite._id)
     }
 
     await ctx.db.delete(args.id);
@@ -136,5 +147,70 @@ export const update = mutation({
     });
 
     return document;
+  },
+});
+
+export const favorite = mutation({
+  args: { id: v.id("forms") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
+
+    const authorId = identity.subject;
+    const existingForm = await ctx.db.get(args.id);
+
+    if (!existingForm) {
+      throw new CustomError(errorList["notFound"]);
+    }
+
+    const exitingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_form", (q) =>
+        q.eq("formId", args.id).eq("authorId", authorId)
+      )
+      .unique();
+
+    if (exitingFavorite) {
+      throw new Error("Form already favorited");
+    }
+
+    await ctx.db.insert("userFavorites", {
+      authorId: existingForm.authorId,
+      formId: existingForm._id,
+    });
+
+    return existingForm;
+  },
+});
+
+export const unfavorite = mutation({
+  args: { id: v.id("forms") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
+
+    const authorId = identity.subject;
+    const existingForm = await ctx.db.get(args.id);
+
+    if (!existingForm) {
+      throw new CustomError(errorList["notFound"]);
+    }
+
+    const exitingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_form", (q) =>
+        q.eq("formId", args.id).eq("authorId", authorId)
+      )
+      .unique();
+
+    if (!exitingFavorite) {
+      throw new Error("Favorited form not found");
+    }
+
+    await ctx.db.delete(exitingFavorite._id);
+
+    return existingForm;
   },
 });

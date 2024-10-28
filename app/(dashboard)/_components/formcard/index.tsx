@@ -11,6 +11,9 @@ import Actions from "../actions";
 import { Button } from "@/components/ui/button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { MoreHorizontal } from "lucide-react";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 interface FormCardProps {
   id: string;
@@ -31,12 +34,29 @@ const FormCard = ({
   title,
   isFavorite,
 }: FormCardProps) => {
+    const {mutate: onFavorite,
+      pending: pendingFavorite
+    } = useApiMutation(api.form.favorite);
+
+    const {mutate: onUnfavorite,
+      pending: pendingUfavorite
+    } = useApiMutation(api.form.unfavorite);
+
     const {userId} = useAuth();
     const authorLabel = userId === authorId ? "You" : authorName;
     const createAtLabel = formatDistanceToNow(createdAt,{
         addSuffix: true,
     });
 
+    const toggleFavorite = () => {
+      if(!isFavorite){
+        onFavorite({
+          id
+        }).catch(() => toast.error("Failed to unfavorite"));
+      }else{
+        onUnfavorite({id}).catch(() => toast.error("Failed to favorite"))
+      }
+    }
   return (
     <Link href={`/forms/${id}/edit`}>
       <div className='group aspect-[100/127] border rounded-lg flex flex-col justify-between overflow-hidden bg-white'>
@@ -57,9 +77,9 @@ const FormCard = ({
         authorLabel={authorLabel}
         createdAtLabel={createAtLabel}
         isFavorite={isFavorite}
-        disabled={false}
+        disabled={pendingFavorite || pendingUfavorite}
         title={title}
-        onClick={() => {}}
+        onClick={toggleFavorite}
         />
       </div>
     </Link>
