@@ -39,6 +39,8 @@ const FormList = ({ query, authId }: FormListProps) => {
     );
   }
 
+  console.log(data.length, query.favorites, query.search);
+
   if (!data.length && query.favorites) {
     return <EmptyFavorites />;
   }
