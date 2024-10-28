@@ -7,17 +7,22 @@ import EmptySearch from "./empty-search";
 import { api } from "@/convex/_generated/api";
 import FormCard from "./formcard";
 import NewFormButton from "./formcard/new-form-button";
+import { useSearchParams } from "next/navigation";
 
 interface FormListProps {
   authId: string;
-  query: {
-    search?: string;
-    favorites?: string;
-  };
+  // query: {
+  //   search?: string;
+  //   favorites?: string;
+  // };
 }
 
-const FormList = ({ query, authId }: FormListProps) => {
-  const data = useQuery(api.forms.get, { authorId: authId, search: query.search, favorites: query.favorites });
+const FormList = ({ authId }: FormListProps) => {
+  const searchParams = useSearchParams();
+  let favorites = searchParams.get("favorites")?.trim();
+  let search = searchParams.get("search")?.trim();
+
+  const data = useQuery(api.forms.get, { authorId: authId, search: search, favorites: favorites });
 
   // const data: any[] = []
 
@@ -25,7 +30,7 @@ const FormList = ({ query, authId }: FormListProps) => {
     return (
       <div className='relative max-w-[1200px] mx-auto w-full'>
         <h2 className='text-2xl'>
-          {query.favorites ? "Favorite forms" : "My forms"}
+          {favorites ? "Favorite forms" : "My forms"}
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10 '>
           <NewFormButton />
@@ -39,13 +44,13 @@ const FormList = ({ query, authId }: FormListProps) => {
     );
   }
 
-  console.log(data.length, query.favorites, query.search);
+  console.log(data.length, favorites, search);
 
-  if (!data.length && query.favorites) {
+  if (!data.length && favorites) {
     return <EmptyFavorites />;
   }
 
-  if (!data.length && query.search) {
+  if (!data.length && search) {
     return <EmptySearch />;
   }
 
@@ -56,7 +61,7 @@ const FormList = ({ query, authId }: FormListProps) => {
   return (
     <div className='relative max-w-[1200px] mx-auto w-full'>
       <h2 className='text-2xl'>
-        {query.favorites ? "Favorite forms" : "My forms"}
+        {favorites ? "Favorite forms" : "My forms"}
       </h2>
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10 '>
         <NewFormButton />
