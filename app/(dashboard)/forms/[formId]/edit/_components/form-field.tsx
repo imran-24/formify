@@ -37,7 +37,7 @@ interface FormFieldProps {
   published: boolean;
   removeQuestion: (formId: Id<"formFields">) => void;
   disabled?: boolean;
-  // options?: Doc<"options">[] | undefined;
+  options?: Doc<"options">[] | undefined;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -50,7 +50,7 @@ const FormField: React.FC<FormFieldProps> = ({
   responseId,
   published,
   disabled,
-  // options,
+  options,
 }) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -63,9 +63,9 @@ const FormField: React.FC<FormFieldProps> = ({
   const removeManyOption = useMutation(api.option.removeMany);
   const updateQuestion = useMutation(api.formField.update);
 
-  let options = useQuery(api.options.get, {
-    formFieldId: question._id,
-  });
+  // let options = useQuery(api.options.get, {
+  //   formFieldId: question._id,
+  // });
 
   const { edgestore } = useEdgeStore();
   const formImage = useFormImage();
@@ -143,7 +143,6 @@ const FormField: React.FC<FormFieldProps> = ({
       label,
       required,
       type: question.type,
-      order: question.order + 1,
       imageUrl: question.imageUrl,
       options: items,
     });

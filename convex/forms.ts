@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { CustomError, errorList } from "../lib/utils";
-import {getAllOrThrow} from "convex-helpers/server/relationships";
+import { getAllOrThrow } from "convex-helpers/server/relationships";
 
 export const get = query({
   args: {
@@ -19,13 +19,13 @@ export const get = query({
         .withIndex("by_user", (q) => q.eq("authorId", identity.subject))
         .order("desc")
         .collect();
-        const ids = favoriteForms.map(b => b.formId);
-        const forms = await getAllOrThrow(ctx.db, ids);
+      const ids = favoriteForms.map((b) => b.formId);
+      const forms = await getAllOrThrow(ctx.db, ids);
 
-        return forms.map((form) => ({
-          ...form,
-          isFavorite: true
-        }))
+      return forms.map((form) => ({
+        ...form,
+        isFavorite: true,
+      }));
     }
     const title = args.search as string;
     let forms = [];

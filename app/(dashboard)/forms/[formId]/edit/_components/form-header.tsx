@@ -13,7 +13,7 @@ interface FormHeaderProps {
 
 const FormHeader = ({ initialData, published = false }: FormHeaderProps) => {
   return (
-    <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg px-0 pt-6 pb-2  mt-4 border shadow'>
+    <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg px-0 pt-6 pb-6  mt-4 border shadow'>
       <Title published={published} large={true} initialData={initialData} />
       <Description published={published} initialData={initialData} />
     </div>

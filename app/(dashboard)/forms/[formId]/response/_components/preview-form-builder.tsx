@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import FormField from "@/app/(dashboard)/forms/[formId]/edit/_components/form-field";
 import { Loader2 } from "lucide-react";
+import { QuestionsType } from "../../edit/_components/form-builder";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PreviewFormBuilderProps {
-  questions: unknown[];
+  questions: QuestionsType[] | null | [];
   published: boolean;
   submitted: boolean;
   responseId?: Id<"responses">;
@@ -42,13 +44,17 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
     return response;
   };
 
-  const updateAnswer = (formFieldId: Id<"formFields">, answer: string, options?: any) => {
+  const updateAnswer = (
+    formFieldId: Id<"formFields">,
+    answer: string,
+    options?: any
+  ) => {
     if (!responseId) throw Error("Response id is required");
     saveAnswer({
       responseId,
       formFieldId,
       answer,
-      optionIds: options
+      optionIds: options,
     });
   };
 
@@ -69,12 +75,24 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
     <div className='max-w-5xl w-full  mx-auto flex flex-col space-y-3'>
       <form onSubmit={handleSubmit}>
         <div className='flex flex-col-reverse gap-y-2'>
-          {questions.map((question: any, index) => {
+          {questions?.map((question, index) => {
             const response = getAnswerToQuestion(question._id);
             if (response === undefined)
               return (
-                <div key={index}  className='mt-10 flex justify-center'>
-                  <Loader2 className=' size-8 text-neutral-500 animate-spin' />
+                <div className='max-w-5xl w-full mx-auto flex flex-col space-y-2 bg-white rounded-lg p-6 mt-4 border shadow'>
+                  {/* <div className='flex items-center justify-end space-x-3'>
+                    <Skeleton className='flex items-center gap-x-1 h-8 w-8'></Skeleton>
+                    <Skeleton className='flex items-center gap-x-1 h-8 w-28'></Skeleton>
+                  </div> */}
+                  <div className='flex items-center justify-between space-x-3'>
+                    <Skeleton className='flex items-center gap-x-1 h-8 w-full'></Skeleton>
+                  </div>
+                  <Skeleton className='flex items-center gap-x-1 h-8 w-full'></Skeleton>
+                  {/* <div className='flex items-center justify-end space-x-3'>
+                    <Skeleton className='flex items-center gap-x-1 h-8 w-8'></Skeleton>
+                    <Skeleton className='flex items-center gap-x-1 h-8 w-8'></Skeleton>
+                    <Skeleton className='flex items-center gap-x-1 h-8 w-8'></Skeleton>
+                  </div> */}
                 </div>
               );
 
@@ -88,6 +106,7 @@ const PreviewFormBuilder: React.FC<PreviewFormBuilderProps> = ({
                 answer={response} // Pass the fetched answer.
                 responseId={responseId}
                 updateAnswer={updateAnswer}
+                options={question.options}
                 question={question}
                 removeQuestion={() => {}}
                 disabled={submitted}

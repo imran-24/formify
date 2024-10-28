@@ -7,8 +7,12 @@ import { cn } from "@/lib/utils";
 import { useParams } from "next/navigation";
 import FormField from "./form-field";
 
+export type QuestionsType = Doc<"formFields"> & {
+  options: Doc<"options">[];
+};
+
 interface FormBuilderProps {
-  questions: Doc<"formFields">[];
+  questions: QuestionsType[] | null | [];
   published: boolean;
 }
 
@@ -21,8 +25,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ questions, published }) => {
 
   const addQuestion = () => {
     create({
-      formId: formId as Id<"forms">,
-      order: questions.length,
+      formId: formId as Id<"forms">
     });
   };
 
@@ -35,7 +38,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ questions, published }) => {
   return (
     <div>
       <div className='flex flex-col-reverse gap-y-2'>
-        {questions.map((question: Doc<"formFields">, index) => {
+        {questions?.map((question, index) => {
           // console.log(question._id);
           
 
@@ -48,7 +51,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ questions, published }) => {
               question={question}
               removeQuestion={removeQuestion}
               disabled={pending}
-              // options={options}
+              options={question.options}
               updateAnswer={() => {}}
             />
           );

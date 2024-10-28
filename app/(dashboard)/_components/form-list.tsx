@@ -44,7 +44,6 @@ const FormList = ({ authId }: FormListProps) => {
     );
   }
 
-  console.log(data.length, favorites, search);
 
   if (!data.length && favorites) {
     return <EmptyFavorites />;

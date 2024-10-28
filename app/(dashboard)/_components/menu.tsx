@@ -35,16 +35,15 @@ export const Menu = ({ formId }: MenuProps) => {
   const router = useRouter();
   const { user } = useUser();
   const { mutate, pending } = useApiMutation(api.form.remove);
-  const remove = useMutation(api.form.remove);
-
 
   const onDelete = () => {
+    router.push("/");
     mutate({
       id: formId,
     })
       .then(() => {
         toast.success("Form moved to trash!")
-        router.push("/");
+       
       })
       .catch(() => toast.error("Failed to delete form"));
   };

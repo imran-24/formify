@@ -1,6 +1,9 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { CustomError, errorList } from "../lib/utils";
+import { getQuestionOnly } from "./formFields";
+import { Id } from "./_generated/dataModel";
+import {remove as removeQuestions} from "./formField";
 
 const images = [
   "/placefolders/1.svg",
@@ -107,10 +110,18 @@ export const remove = mutation({
       .unique();
 
     if (existingFavorite) {
-      await ctx.db.delete(existingFavorite._id)
+      await ctx.db.delete(existingFavorite._id);
     }
 
-    await ctx.db.delete(args.id);
+    const questions = await getQuestionOnly(ctx , {formId: args.id as Id<"forms">})
+
+    const deleteFormFields = questions.map( async (question) => {
+      await removeQuestions(ctx, {id: question._id});
+    })
+
+    const formsWithOptionsBoolean = Promise.all(deleteFormFields);
+    
+    if (await formsWithOptionsBoolean) await ctx.db.delete(args.id);
   },
 });
 

@@ -5,7 +5,6 @@ import { CustomError, errorList } from "../lib/utils";
 export const create = mutation({
   args: {
     formId: v.id("forms"),
-    order: v.number(),
     label: v.optional(v.string()),
     required: v.optional(v.boolean()),
     type: v.optional(v.string()),
@@ -17,7 +16,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new CustomError(errorList["unauthorized"]);
-    const { formId, order, label, required, type, imageUrl, options } = args;
+    const { formId, label, required, type, imageUrl, options } = args;
 
     if (!formId) throw new CustomError(errorList["badRequest"]);
 
@@ -25,7 +24,6 @@ export const create = mutation({
       label: label || "Question",
       formId: formId,
       required: required || false,
-      order: order,
       type: type || "1",
       imageUrl: imageUrl
     });

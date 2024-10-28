@@ -17,19 +17,18 @@ export default defineSchema({
       filterFields: ["authorId"],
     }),
 
-    userFavorites: defineTable({
-      formId: v.id("forms"),
-      authorId: v.string(),
-    })
+  userFavorites: defineTable({
+    formId: v.id("forms"),
+    authorId: v.string(),
+  })
     .index("by_form", ["formId"])
-    .index("by_user",["authorId"])
+    .index("by_user", ["authorId"])
     .index("by_user_form", ["formId", "authorId"]),
 
   formFields: defineTable({
     formId: v.id("forms"), // Reference to the associated form's id
     label: v.string(), // The question or prompt for the field
     required: v.boolean(), // Indicates if the field is mandatory
-    order: v.number(), // Position of the field within the form
     type: v.string(),
     imageUrl: v.optional(v.string()),
     // options: v.optional(v.array(v.string())),
@@ -48,7 +47,7 @@ export default defineSchema({
   })
     .index("by_form_and_user", ["formId", "userId"])
     .index("by_form_status", ["formId", "status"])
-
+    .index("by_form_and_user_status", ["formId", "userId", "status"])
     .index("by_status", ["status"]),
 
   // ResponseAnswers Table

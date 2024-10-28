@@ -31,6 +31,8 @@ const FormEditPage = ({ params }: FormEditPageProps) => {
   const formFields = useQuery(api.formFields.get, {
     formId: params.formId,
   });
+
+  console.log(formFields)
   // useEffect(() =>{
   //   if(form?.isPublished)
   //   setIsPublished(form.isPublished)

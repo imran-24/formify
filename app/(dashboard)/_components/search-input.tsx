@@ -14,7 +14,6 @@ const SearchInput = () => {
         setSearch(e.target.value);
     }
 
-    console.log(debouncedValue[0])
     useEffect(() => {
         if(debouncedValue[0]){
             const url = qs.stringifyUrl({
