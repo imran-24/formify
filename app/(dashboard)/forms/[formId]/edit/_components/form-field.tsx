@@ -476,7 +476,7 @@ const FormField: React.FC<FormFieldProps> = ({
             <div className='flex flex-col space-y-4 transition-all pl-3 transform ease-in-out  duration-200'>
               <RadioGroup required={required} disabled={!published || disabled}>
                 {items?.map((option) => (
-                  <div className='flex items-center spa transition-all transform ease-in-out  duration-200'>
+                  <div key={option._id}  className='flex items-center spa transition-all transform ease-in-out  duration-200'>
                     <>
                       <RadioGroupItem
                         checked={checkList?.includes(option._id)}

@@ -17,27 +17,6 @@ interface NavbarProps{
 }
 
 const Navbar = ({initialData, published}: NavbarProps) => {
-//   const params = useParams();
-
-//   const document = useQuery(api.form.getById, {
-//     formId: params.formId as Id<"forms">,
-//   });
-
-//   if (document === undefined) {
-//     return (
-//       <div>Loading</div>
-//       //   <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center justify-between">
-//       //     <Title.Skeleton />
-//       //     <div className="flex items-center gap-x-2">
-//       //       <Menu.Skeleton />
-//       //     </div>
-//       //   </nav>
-//     );
-//   }
-
-//   if(document == null) return (
-//     <div>Not Found</div>
-//   )
 
   return (
     <>

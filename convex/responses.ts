@@ -10,14 +10,15 @@ export const get = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new CustomError(errorList["unauthorized"]);
 
-    const existingFormField = await ctx.db.get(args.formId);
+    const isAdmin = identity.org_role === "org:admin";
 
-    if (!existingFormField) {
+    const existingForm = await ctx.db.get(args.formId);
+
+    if (!existingForm) {
       throw new CustomError(errorList["notFound"]);
     }
 
-    const userId = identity.subject;
-    if (userId !== existingFormField.authorId) {
+    if (existingForm.authorId !== identity.subject && !isAdmin) {
       throw new CustomError(errorList["forbidden"]);
     }
     const responses = await ctx.db

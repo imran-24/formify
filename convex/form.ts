@@ -66,9 +66,14 @@ export const getById = query({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
+    
+    if (!identity) throw new CustomError(errorList["unauthorized"]);
+
+    const isAdmin = identity.org_role === "org:admin";
 
     const form = await ctx.db.get(args.formId);
 
+    
     if (!form) {
       return null;
     }
@@ -79,7 +84,7 @@ export const getById = query({
 
     if (!identity) throw new CustomError(errorList["unauthorized"]);
 
-    if (form.authorId !== identity.subject) return null;
+    if (form.authorId !== identity.subject && !isAdmin) return null;
 
     return form;
   },
@@ -92,13 +97,16 @@ export const remove = mutation({
 
     if (!identity) throw new CustomError(errorList["unauthorized"]);
 
+    const isAdmin = identity.org_role === "org:admin";
+
+    
     const existingForm = await ctx.db.get(args.id);
 
     if (!existingForm) {
       throw new CustomError(errorList["notFound"]);
     }
 
-    if (existingForm.authorId !== identity.subject) {
+    if (existingForm.authorId !== identity.subject && !isAdmin) {
       throw new CustomError(errorList["forbidden"]);
     }
 
@@ -134,10 +142,11 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-
     if (!identity) {
       throw new CustomError(errorList["unauthorized"]);
     }
+
+    const isAdmin = identity.org_role === "org:admin";
 
     const userId = identity.subject;
 
@@ -149,7 +158,7 @@ export const update = mutation({
       throw new CustomError(errorList["notFound"]);
     }
 
-    if (existingDocument.authorId !== userId) {
+    if (existingDocument.authorId !== userId && !isAdmin) {
       throw new CustomError(errorList["forbidden"]);
     }
 

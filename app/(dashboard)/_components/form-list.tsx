@@ -8,6 +8,7 @@ import { api } from "@/convex/_generated/api";
 import FormCard from "./formcard";
 import NewFormButton from "./formcard/new-form-button";
 import { useSearchParams } from "next/navigation";
+import { useAdmin } from "@/hooks/use-admin";
 
 interface FormListProps {
   authId: string;
@@ -18,11 +19,13 @@ interface FormListProps {
 }
 
 const FormList = ({ authId }: FormListProps) => {
+  const {isAdmin} = useAdmin();
+  console.log(isAdmin)
   const searchParams = useSearchParams();
   let favorites = searchParams.get("favorites")?.trim();
   let search = searchParams.get("search")?.trim();
 
-  const data = useQuery(api.forms.get, { authorId: authId, search: search, favorites: favorites });
+  const data = useQuery(!isAdmin ? api.forms.get : api.forms.getAll , { authorId: authId, search: search, favorites: favorites });
 
   // const data: any[] = []
 

@@ -27,7 +27,7 @@ const SearchInput = () => {
     },[debouncedValue, router]);
 
   return (
-    <div className='relative flex items-center max-w-[420px] lg:max-w-[580px]  mx-auto'>
+    <div className='relative flex items-center w-full max-w-[420px] lg:max-w-[580px]  mx-auto'>
         <div className='absolute left-5 z-50'>
             <Search className='size-5 text-primary/80' />
         </div>

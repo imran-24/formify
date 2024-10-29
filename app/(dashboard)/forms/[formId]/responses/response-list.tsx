@@ -44,7 +44,7 @@ const ResponseList = ({
         <DropdownMenuLabel>All responses</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {list.map((response, index) => (
-          <DropdownMenuItem>
+          <DropdownMenuItem key={index}>
             <Link href={`/forms/${formId}/response/${response._id}`}>
               Response {index + 1}
             </Link>

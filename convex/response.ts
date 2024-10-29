@@ -39,48 +39,7 @@ export const create = mutation({
   },
 });
 
-// export const getById = query({
-//   args: {
-//     formId: v.id("forms"),
-//     userId: v.string(),
-//   },
-//   handler: async (ctx, args) => {
-//     const identity = await ctx.auth.getUserIdentity();
-//     if (!identity) throw new Error("Unauthorized");
-//     const { formId, userId } = args;
 
-//     if (!formId) throw new Error("Form is is required");
-
-//     if (identity.subject == userId) throw new Error("Unauthorized");
-
-//     const response = await ctx.db
-//       .query("responses")
-//       .withIndex("by_form_and_user", (q) =>
-//         q
-//           .eq("formId", args.formId)
-//           .eq("userId", args.userId)
-//       )
-//       .unique();
-
-//     if (!response) {
-//       return null;
-//     }
-
-//     // if (form.isPublished) {
-//     //   return form;
-//     // }
-
-//     // if (!identity) throw new Error("Not authenticated");
-
-//     // const userId = identity.subject;
-
-//     // if (form.authorId !== userId) {
-//     //   throw new Error("Unauthorized");
-//     // }
-
-//     return response;
-//   },
-// });
 
 export const get = query({
   args: {

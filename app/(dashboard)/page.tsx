@@ -1,8 +1,12 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useOrganizationList } from "@clerk/nextjs";
 import FormList from "./_components/form-list";
 import Navbar from "./_components/navbar";
+import { useEffect } from "react";
+import { Loading } from "@/components/auth/loading";
+import { useAdmin } from "@/hooks/use-admin";
+import { CustomError, errorList } from "@/lib/utils";
 
 interface DashboardPageProps {
   searchParams: {
@@ -12,20 +16,16 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ searchParams }: DashboardPageProps) {
-  const { userId, has } = useAuth();
-
-  if (!has) return null
-
-  const isAdmin = has({ role: 'org:admin' })
-
-  console.log(isAdmin);
+  const { userId } = useAuth();
+  
 
   return (
     <div className='flex flex-col p-6 flex-1 h-full'>
       <Navbar />
-      <FormList 
-      // query={searchParams} 
-      authId={userId!} />
+      <FormList
+        // query={searchParams}
+        authId={userId!}
+      />
     </div>
   );
 }

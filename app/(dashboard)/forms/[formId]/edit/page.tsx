@@ -13,6 +13,7 @@ import { Loader, Loader2 } from "lucide-react";
 import FormBuilder from "./_components/form-builder";
 import { useEffect, useState } from "react";
 import { CustomError, errorList } from "@/lib/utils";
+import { useAdmin } from "@/hooks/use-admin";
 
 interface FormEditPageProps {
   params: {
@@ -21,7 +22,7 @@ interface FormEditPageProps {
 }
 
 const FormEditPage = ({ params }: FormEditPageProps) => {
-  // const [isPublished, setIsPublished] = useState(false);
+  const {isAdmin} = useAdmin();
   const form = useQuery(api.form.getById, {
     formId: params.formId,
   });
@@ -61,7 +62,7 @@ const FormEditPage = ({ params }: FormEditPageProps) => {
     );
   }
 
-  if (user?.id !== form?.authorId) {
+  if (user?.id !== form?.authorId && !isAdmin) {
     throw new CustomError(errorList["forbidden"]);
   }
 

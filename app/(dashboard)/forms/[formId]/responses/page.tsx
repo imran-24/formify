@@ -3,11 +3,12 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useUser } from "@clerk/nextjs";
+import { SignIn, useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import Navbar from "@/app/(dashboard)/forms/[formId]/edit/_components/navbar";
 import ResponseList from "./response-list";
 import { CustomError, errorList } from "@/lib/utils";
+import { useAdmin } from "@/hooks/use-admin";
 
 interface FormResponsesPageProps {
   params: {
@@ -16,7 +17,7 @@ interface FormResponsesPageProps {
 }
 
 const FormResponsesPage = ({ params }: FormResponsesPageProps) => {
-  // const [isPublished, setIsPublished] = useState(false);
+  const { isAdmin } = useAdmin();
   const form = useQuery(api.form.getById, {
     formId: params.formId,
   });
@@ -51,8 +52,12 @@ const FormResponsesPage = ({ params }: FormResponsesPageProps) => {
     );
   }
 
-  if (user?.id !== form?.authorId) {
-    throw new CustomError(errorList["forbidden"])
+  if (!user) return <SignIn />;
+
+  console.log(isAdmin);
+  
+  if (user.id! !== form.authorId! && !isAdmin) {
+    throw new CustomError(errorList["forbidden"]);
   }
 
   console.log(responses);

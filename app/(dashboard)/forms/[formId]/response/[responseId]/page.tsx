@@ -10,6 +10,7 @@ import Navbar from "../../edit/_components/navbar";
 import PreviewFormBuilder from "./preview-form-builder";
 import { useUser } from "@clerk/nextjs";
 import { CustomError, errorList } from "@/lib/utils";
+import { useAdmin } from "@/hooks/use-admin";
 interface ResponseFormPageProps {
   params: {
     formId: Id<"forms">;
@@ -17,6 +18,7 @@ interface ResponseFormPageProps {
   };
 }
 const ResponseFormPage = ({ params }: ResponseFormPageProps) => {
+  const {isAdmin} = useAdmin();
   const {user} = useUser();
   const form = useQuery(api.form.getById, {
     formId: params.formId,
@@ -28,7 +30,7 @@ const ResponseFormPage = ({ params }: ResponseFormPageProps) => {
 
   let isPublish = form?.isPublished || false;
 
-  let owner = user?.id === form?.authorId;
+  let owner = user?.id === form?.authorId || isAdmin;
   if (form === undefined || formFields === undefined) {
     return (
       <main className='h-full max-w-full'>
