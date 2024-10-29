@@ -29,7 +29,7 @@ const DashboradLayout = ({ children }: DashboardLayout) => {
   console.log(orgRole, orgId);
   // useEffect(() => {
   //   if (isLoaded) {
-    
+
   //     const isAdmin = orgRole === "org:admin";
   //     if(isAdmin){
   //       setActive({ organization: orgId });
@@ -44,18 +44,14 @@ const DashboradLayout = ({ children }: DashboardLayout) => {
       const adminMembership = userMemberships.data.find(
         (membership: any) => membership?.role === "org:admin"
       );
-
       if (adminMembership) {
         console.log("Admin found");
-
         // Set the active organization if the user is an admin
         setActive({ organization: adminMembership.organization.id });
         setAdmin(userId);
       } else {
         console.log("Not an admin");
         setActive({ organization: "" });
-
-        // Optionally redirect or handle non-admin users here
       }
     }
   }, [isLoaded, userMemberships.data]);
