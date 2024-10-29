@@ -13,7 +13,7 @@ interface DashboardLayout {
 const DashboradLayout = ({ children }: DashboardLayout) => {
   const { userId, orgRole, orgId } = useAuth();
   const { setAdmin } = useAdmin();
-  const { isLoaded, setActive } = useOrganizationList({
+  const { isLoaded, setActive, userMemberships } = useOrganizationList({
     userMemberships: {
       pageSize: 5,
       keepPreviousData: true,
@@ -26,39 +26,39 @@ const DashboradLayout = ({ children }: DashboardLayout) => {
 
   if (!userId) throw new CustomError(errorList["unauthorized"]);
 
-  console.log(orgRole);
-  useEffect(() => {
-    if (isLoaded) {
-    
-      const isAdmin = orgRole === "org:admin";
-      if(isAdmin){
-        setActive({ organization: orgId });
-        setAdmin(userId);
-      }
-    }
-  }, [isLoaded]);
-
+  console.log(orgRole, orgId);
   // useEffect(() => {
-  //   if (isLoaded && userMemberships.data.length) {
-  //     // Check if there is an organization with the "org:admin" role
-  //     const adminMembership = userMemberships.data.find(
-  //       (membership: any) => membership?.role === "org:admin"
-  //     );
-
-  //     if (adminMembership) {
-  //       console.log("Admin found");
-
-  //       // Set the active organization if the user is an admin
-  //       setActive({ organization: adminMembership.organization.id });
+  //   if (isLoaded) {
+    
+  //     const isAdmin = orgRole === "org:admin";
+  //     if(isAdmin){
+  //       setActive({ organization: orgId });
   //       setAdmin(userId);
-  //     } else {
-  //       console.log("Not an admin");
-  //       setActive({ organization: "" });
-
-  //       // Optionally redirect or handle non-admin users here
   //     }
   //   }
-  // }, [isLoaded, userMemberships.data]);
+  // }, [isLoaded]);
+
+  useEffect(() => {
+    if (isLoaded && userMemberships.data.length) {
+      // Check if there is an organization with the "org:admin" role
+      const adminMembership = userMemberships.data.find(
+        (membership: any) => membership?.role === "org:admin"
+      );
+
+      if (adminMembership) {
+        console.log("Admin found");
+
+        // Set the active organization if the user is an admin
+        setActive({ organization: adminMembership.organization.id });
+        setAdmin(userId);
+      } else {
+        console.log("Not an admin");
+        setActive({ organization: "" });
+
+        // Optionally redirect or handle non-admin users here
+      }
+    }
+  }, [isLoaded, userMemberships.data]);
 
   return (
     <main className='h-full'>
